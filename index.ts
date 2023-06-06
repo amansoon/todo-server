@@ -10,9 +10,10 @@ const app = express();
 
 const PORT = process.env.PORT || 8000;
 const DB_URL = process.env.DB_URL as string;
+const LOCAL_DB_URL = process.env.LOCAL_DB_URL as string;
 
 // mongodb connection
-connectDB(DB_URL);
+connectDB(LOCAL_DB_URL);
 
 // setup middlewares
 app.use(cors());

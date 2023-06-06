@@ -16,9 +16,9 @@ async function auth(req: CustomRequest, res: Response, next: NextFunction) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as Secret);
     const userId = (decoded as JwtPayload).userId;
-    const user = await User.findOne({ _id: userId });
+    const user = await User.findOne({ _id: userId }, { password: 0, __v: 0 });
     if (user === null) {
-      return res.json({ status: "FAILED", message: "User not exists"});
+      return res.json({ status: "FAILED", message: "User not exists" });
     }
     req.user = user;
     return next();

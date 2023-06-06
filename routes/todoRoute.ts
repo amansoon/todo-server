@@ -4,13 +4,13 @@ import { auth } from "../middlewares/auth";
 
 const router = Router();
 
-router.get("/get", auth, TodoController.getAllNotes);
-router.get("/get/:id", TodoController.getNote);
+router.get("/", auth, TodoController.getAllNotes);
+router.get("/:id", auth, TodoController.getNote);
 
-router.post("/create", TodoController.createNote);
-router.put("/update/:id", TodoController.updateNote);
+router.post("/", auth, TodoController.createNote);
+router.put("/:id", auth, TodoController.updateNote);
 
-router.delete("/delete", TodoController.deleteAllNotes);
-router.delete("/delete/:id", TodoController.deleteNote);
+router.delete("/", auth, TodoController.deleteAllNotes);
+router.delete("/:id", auth, TodoController.deleteNote);
 
 export default router;

@@ -4,8 +4,8 @@ import { auth } from "../middlewares/auth";
 const router = Router();
 
 // public routes
-router.post("/create", UserController.createUser);
-router.get("/login", UserController.loginUser);
+router.post("/signup", UserController.createUser);
+router.post("/login", UserController.loginUser);
 
 // protected routes
 router.get("/", auth, UserController.getUser);

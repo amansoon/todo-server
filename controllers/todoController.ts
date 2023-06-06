@@ -3,19 +3,21 @@ import { Todo } from "../models/todo";
 
 class TodoController {
   static async createNote(req: Request, res: Response) {
+    console.log("create new note...")
+
     const { timestamp, text } = req.body;
 
     // check undefined
     if (!(timestamp && text)) {
-      return res.json("all fields are required");
+      res.json({ status: "FAILED", message: "All fields are required" });
     }
 
     if (!timestamp) {
-      return res.json("timestamp is required");
+      res.json({ status: "FAILED", message: "time stamp is required" });
     }
 
     if (!text) {
-      return res.json("text is required");
+      res.json({ status: "FAILED", message: "text is required" });
     }
 
     try {
@@ -24,7 +26,7 @@ class TodoController {
         text: text,
       });
       const todo = await todoDoc.save();
-      res.json({ status: "SUCCESS", message: "New todo created successfully.", data: todo });
+      res.json({ status: "SUCCESS", message: "New todo created successfully.", data: { todo } });
     } catch (err) {
       res.json({ status: "FAILED", message: "Something went wrong. Unable to create todo." });
       console.log(err);
@@ -32,9 +34,11 @@ class TodoController {
   }
 
   static async getAllNotes(req: Request, res: Response) {
+    console.log("get all notes...")
+
     try {
       const todos = await Todo.find();
-      res.json({ status: "SUCCESS", message: "fetched successfully.", data: todos });
+      res.json({ status: "SUCCESS", message: "fetched successfully.", data: { todos } });
     } catch (err) {
       res.json({ status: "FAILED", message: "Something went wrong. Unable to get todos" });
       console.log(err);
@@ -42,6 +46,8 @@ class TodoController {
   }
 
   static async getNote(req: Request, res: Response) {
+    console.log("get single note...")
+
     const { id } = req.params;
     try {
       const todo = await Todo.findOne({ _id: id });
@@ -57,6 +63,7 @@ class TodoController {
   }
 
   static async deleteNote(req: Request, res: Response) {
+    console.log("delete single note...")
     const { id } = req.params;
     try {
       const result = await Todo.deleteOne({ _id: id });
@@ -68,6 +75,9 @@ class TodoController {
   }
 
   static async deleteAllNotes(req: Request, res: Response) {
+    console.log("delete all note...")
+
+
     try {
       const result = await Todo.deleteMany({});
       res.json({ status: "SUCCESS", message: "deleted all todos successfully." });
@@ -80,6 +90,8 @@ class TodoController {
   static async updateNote(req: Request, res: Response) {
     const { id } = req.params;
     const { text } = req.body;
+
+    console.log("update one note")
 
     if (!text) {
       return res.json({ status: "FAILED", message: "text is required" });
