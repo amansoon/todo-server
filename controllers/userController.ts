@@ -100,14 +100,48 @@ class UserController {
     res.json({ status: "SUCCESS", message: "get user", data: { user } });
   }
 
-  static async updateUser(req: Request, res: Response) {
-    res.json({ status: "SUCCESS", message: "update user", data: "user" });
+  static async updateUser(req: CustomRequest, res: Response) {
+    let { name, email } = req.body;
+    if (!(name && email)) {
+      return res.json({ status: "FAILED", message: "All fields are required" });
+    }
+
+    name = name.trim();
+    email = email.trim();
+
+    // validate name
+    if (name.length < 3) {
+      return res.json({ status: "FAILED", message: "Name must contain atleast 3 characters." });
+    }
+    if (name.length > 30) {
+      return res.json({ status: "FAILED", message: "Name must contain atmost 30 characters." });
+    }
+
+    // validate email
+    if (!emailValidator.validate(email)) {
+      return res.json({ status: "FAILED", message: "Invalid email address" });
+    }
+
+    // All fields are valid, update user
+    try {
+      const user = await User.exists({ email: email });
+      console.log(user, req.user)
+      if (user && user._id.toString() !== req.user._id.toString()) {
+        return res.json({ status: "FAILED", message: "Another user have account with this email, try different email." });
+      }
+      else {
+        const result = await User.updateOne({ _id: req.user._id, }, { name, email })
+        res.json({ status: "SUCCESS", message: "user updated successfully." });
+      }
+    } catch (err) {
+      res.json({ status: "FAILED", message: "Unable to update user" });
+    }
   }
 
   static async deleteUser(req: CustomRequest, res: Response) {
     try {
       const result = await User.deleteOne({ _id: req.user._id })
-      res.json({ status: "SUCCESS", message: "user deleted successfully" });
+      res.json({ status: "SUCCESS", message: "User deleted successfully" });
     }
     catch (err) {
       res.json({ status: "FAILED", message: "unable to delete user" });

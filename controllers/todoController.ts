@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import { Todo } from "../models/todo";
+import { CustomRequest } from "../types";
 
 class TodoController {
-  static async createNote(req: Request, res: Response) {
+  static async createNote(req: CustomRequest, res: Response) {
     console.log("create new note...")
 
     const { todoId, timestamp, text } = req.body;
@@ -26,6 +27,7 @@ class TodoController {
 
     try {
       const todoDoc = new Todo({
+        userId: req.user._id.toString(),
         todoId,
         text: text,
         timestamp: new Date(timestamp),
@@ -38,11 +40,11 @@ class TodoController {
     }
   }
 
-  static async getAllNotes(req: Request, res: Response) {
+  // find notes by userId
+  static async getAllNotes(req: CustomRequest, res: Response) {
     console.log("get all notes...")
-
     try {
-      const todos = await Todo.find();
+      const todos = await Todo.find({ userId: req.user._id.toString() });
       res.json({ status: "SUCCESS", message: "fetched successfully.", data: { todos } });
     } catch (err) {
       res.json({ status: "FAILED", message: "Something went wrong. Unable to get todos" });
@@ -79,12 +81,11 @@ class TodoController {
     }
   }
 
-  static async deleteAllNotes(req: Request, res: Response) {
+  static async deleteAllNotes(req: CustomRequest, res: Response) {
     console.log("delete all note...")
-
     try {
-      const result = await Todo.deleteMany({});
-      res.json({ status: "SUCCESS", message: "deleted all todos successfully." });
+      const result = await Todo.deleteMany({ userId: req.user._id.toString() });
+      res.json({ status: "SUCCESS", message: "all todos deleted successfully." });
     } catch (err) {
       res.json({ status: "FAILED", message: "Something went wrong. Unable to delete todos" });
       console.log(err);
@@ -95,12 +96,9 @@ class TodoController {
     const { id } = req.params;
     const { text } = req.body;
 
-    console.log("update one note")
-
     if (!text) {
       return res.json({ status: "FAILED", message: "text is required" });
     }
-
     try {
       const result = await Todo.updateOne({ todoId: id }, { text });
       res.json({ status: "SUCCESS", message: "updated successfully.", data: result });
