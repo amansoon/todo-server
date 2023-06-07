@@ -4,7 +4,8 @@
   "description": "Server for todo app",
   "main": "index.ts",
   "scripts": {
-    "dev": "nodemon index.ts"
+    "dev": "nodemon index.ts",
+    "start": "node index.ts"
   },
   "author": "Aman Ghanghoriya",
   "license": "ISC",
