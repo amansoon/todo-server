@@ -4,11 +4,9 @@ import { CustomRequest } from "../types";
 
 class TodoController {
   static async createNote(req: CustomRequest, res: Response) {
-    console.log("create new note...")
-
     const { todoId, timestamp, text } = req.body;
 
-    // check undefined
+    // check for undefined
     if (!(todoId && timestamp && text)) {
       return res.json({ status: "FAILED", message: "All fields are required" });
     }
@@ -40,9 +38,10 @@ class TodoController {
     }
   }
 
+
+
   // find notes by userId
   static async getAllNotes(req: CustomRequest, res: Response) {
-    console.log("get all notes...")
     try {
       const todos = await Todo.find({ userId: req.user._id.toString() });
       res.json({ status: "SUCCESS", message: "fetched successfully.", data: { todos } });
@@ -52,9 +51,10 @@ class TodoController {
     }
   }
 
-  static async getNote(req: Request, res: Response) {
-    console.log("get single note...")
 
+
+  // get single note
+  static async getNote(req: Request, res: Response) {
     const { id } = req.params;
     try {
       const todo = await Todo.findOne({ todiId: id });
@@ -69,8 +69,10 @@ class TodoController {
     }
   }
 
+
+
+  // delete note by id
   static async deleteNote(req: Request, res: Response) {
-    console.log("delete single note...")
     const { id } = req.params;
     try {
       const result = await Todo.deleteOne({ todoId: id });
@@ -81,8 +83,11 @@ class TodoController {
     }
   }
 
+
+
+
+  // delete all notes of a user
   static async deleteAllNotes(req: CustomRequest, res: Response) {
-    console.log("delete all note...")
     try {
       const result = await Todo.deleteMany({ userId: req.user._id.toString() });
       res.json({ status: "SUCCESS", message: "all todos deleted successfully." });
@@ -92,6 +97,10 @@ class TodoController {
     }
   }
 
+
+
+
+  // update a note
   static async updateNote(req: Request, res: Response) {
     const { id } = req.params;
     const { text } = req.body;

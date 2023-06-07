@@ -4,11 +4,13 @@ import emailValidator from "email-validator";
 import jwt, { Secret } from "jsonwebtoken";
 import { CustomRequest } from "../types/index";
 
-// const JWT_SECRET = process.env.JWT_SECRET ;
 
 class UserController {
+  // create new user
   static async createUser(req: Request, res: Response) {
     let { name, email, password } = req.body;
+
+    // check for undefined
     if (!(name && email && password)) {
       return res.json({ status: "FAILED", message: "All fields are required" });
     }
@@ -56,6 +58,10 @@ class UserController {
     }
   }
 
+
+
+
+  // User Login
   static async loginUser(req: Request, res: Response) {
     let { email, password } = req.body;
 
@@ -95,6 +101,10 @@ class UserController {
     }
   }
 
+
+
+
+  // Get User
   static async getUser(req: CustomRequest, res: Response) {
     const user = req.user;
     res.json({ status: "SUCCESS", message: "get user", data: { user } });
@@ -138,6 +148,9 @@ class UserController {
     }
   }
 
+
+
+  // Delete User
   static async deleteUser(req: CustomRequest, res: Response) {
     try {
       const result = await User.deleteOne({ _id: req.user._id })
